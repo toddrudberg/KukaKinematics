@@ -51,22 +51,27 @@ namespace KukaKinematics
                 // remember, LHTs are translate then orientate. 
                 // so the revlute axies goes in the transform before the link length offset
 
-                transforms.Add(new cTransform(0, 0, 0, 0, 0, 0, 0)); //J1 parallel to world
-                transforms.Add(new cTransform(1, 0, j1yOff, 0, 90, 90, 0)); // J2 world to frame y is x, x is z, z is y
-                transforms.Add(new cTransform(2, j2yOff, 0, 0, 0, 0, 0)); // J3  world to frame y is x, x is z, z is y
-                transforms.Add(new cTransform(3, j3yOff, j3zoff, 0, 0, 90, 0)); // J4  world to frame y is z, z is y, x is -x
-                transforms.Add(new cTransform(4, 0, 0, 0, 0, -90, 0)); // J5 world to frame y is x, x is z, z is y
-                transforms.Add(new cTransform(5, j5yoff, 0, 0, 0, 90, 0)); // J6 world to frame y is z, z is y, x is -x
-                //transforms.Add(new cTransform(6, 0, 0, 0, 90, 180, 0)); // orient back to world
+                transforms.Add(new cTransform(0, 0, 0, 0, 180, 0, 0)); //J1
+                // world.y = -y, world.z = -z, world.x = x
+                transforms.Add(new cTransform(1, 0, -j1yOff, 0, -180, -90, 0)); // J2
+                // world.y = y, world.z = x, world.x = -z
+                transforms.Add(new cTransform(2, 0, j2yOff, 0, 0, 0, 0)); // J3
+                // world.y = y, world.z = x, world.x = -z
+                transforms.Add(new cTransform(3, j3zoff, j3yOff, 0, 90, 0, 0)); // J4 
+                // world.y = -z, world.z = x, world.x = -y
+                transforms.Add(new cTransform(4, 0, 0, 0, -90, 0, 0)); // J5
+                // world.y = y, world.z = x, world.x = -z
+                transforms.Add(new cTransform(5, 0, j5yoff, 0, -90, 0, 0)); // J6
+                transforms.Add(new cTransform(6, 0, 0, 0, 0, 90, 90)); // orient back to world
             }
 
             public cPose getPoseAtFlange(Joints joints)
             {
-                transforms[0].rz = -joints.J1;
-                transforms[1].rz = -joints.J2;
-                transforms[2].rz = -joints.J3;
-                transforms[3].rz = -joints.J4;
-                transforms[4].rz = -joints.J5;
+                transforms[0].rz = joints.J1;
+                transforms[1].rz = joints.J2;
+                transforms[2].rz = joints.J3;
+                transforms[3].rz = joints.J4;
+                transforms[4].rz = joints.J5;
                 transforms[5].rz = joints.J6;
 
                 // Calculate the pose by multiplying the transforms
@@ -77,6 +82,30 @@ namespace KukaKinematics
                     lht = lht * new cLHT(transforms[i]);
                 }
 
+                return lht.getPoseEulerXYZ();
+            }
+
+            public cPose getJointLocation(int jointIndex, Joints joints)
+            {
+                if (jointIndex < 0 || jointIndex >= transforms.Count)
+                    throw new ArgumentOutOfRangeException(nameof(jointIndex), "Joint index is out of range.");
+                // Set the joint angle for the specified joint
+                transforms[jointIndex].rz = jointIndex switch
+                {
+                    0 => joints.J1,
+                    1 => joints.J2,
+                    2 => joints.J3,
+                    3 => joints.J4,
+                    4 => joints.J5,
+                    5 => joints.J6,
+                    _ => throw new ArgumentOutOfRangeException(nameof(jointIndex), "Invalid joint index.")
+                };
+                // Calculate the pose by multiplying the transforms up to the specified joint
+                cLHT lht = new cLHT(); // Start with the base transform
+                for (int i = 0; i <= jointIndex; i++)
+                {
+                    lht = lht * new cLHT(transforms[i]);
+                }
                 return lht.getPoseEulerXYZ();
             }
 
@@ -121,7 +150,7 @@ namespace KukaKinematics
             cPose COM_World = myRobot.getPoseAtCOM();
 
             // Assume lhtJ6 is your Left-Handed Transform from J6 frame to world
-            cLHT lhtJ6 = flangeInWorld.getLHT();
+            cLHT lhtJ6 = myRobot.getJointLocation(5, myRobot.joints).getLHT(); // Get the LHT for joint 6
 
             // 1. Extract k (Z-axis of joint 6)
             cVector3d z6_World = new cVector3d(lhtJ6.M[0, 2], lhtJ6.M[1, 2], lhtJ6.M[2, 2]);
