@@ -236,7 +236,7 @@ public class cLHT
     k[0] = lhtIn.M[0, 2];
     k[1] = lhtIn.M[1, 2];
     k[2] = lhtIn.M[2, 2];
-    return ComputeAngleFromGravity(k);
+    return Math.Cos(ComputeAngleFromGravity(k).D2R());
   }
 
   public static double ComputeAngleFromGravity(double[] k)

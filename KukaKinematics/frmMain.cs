@@ -130,6 +130,8 @@ namespace KukaKinematics
         for (int i = 0; i < transforms.Count; i++)
         {
           lht = lht * new cLHT(transforms[i]);
+          cLHT bocust = transforms[i].getLHT();
+          Console.WriteLine($"Transform {i}: {bocust.M[0, 3]:F3}, {bocust.M[1, 3]:F3}, {bocust.M[2, 3]:F3}");
         }
 
         return lht.getPoseEulerXYZ();
@@ -210,13 +212,20 @@ namespace KukaKinematics
         joints.J5 = 0;
         joints.J6 = 0;
 
+        joints.J1 = 10.3;
+        joints.J2 = -10;
+        joints.J3 = -100.0;
+        joints.J4 = 10;
+        joints.J5 = 80.3;
+        joints.J6 = 0;
+
         cPose comau = myRobot.getPoseAtFlangeComau(joints);
         OutputPoseToConsole(joints, comau, "Pose at Flange In Comau");
         var zyz = comau.getLHT().getPoseEulerZYZ();
         Console.WriteLine($"ZYZ: {zyz.rz1:F3}, {zyz.ry:F3}, {zyz.rz2:F3}");
         var zyx = comau.getLHT().getPoseEulerZYX();
         Console.WriteLine($"ZYX: {zyx.rz:F3}, {zyx.ry:F3}, {zyx.rx:F3}");
-        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT())}");
+        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT()):F3}");
 
         joints.J1 = 0.0;
         joints.J2 = 0;
@@ -230,13 +239,13 @@ namespace KukaKinematics
         Console.WriteLine($"ZYZ: {zyz.rz1:F3}, {zyz.ry:F3}, {zyz.rz2:F3}");
         zyx = comau.getLHT().getPoseEulerZYX();
         Console.WriteLine($"ZYX: {zyx.rz:F3}, {zyx.ry:F3}, {zyx.rx:F3}");
-        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT())}");
+        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT()):F3}");
 
-        joints.J1 = 0.0;
-        joints.J2 = 0;
+        joints.J1 = 10.3;
+        joints.J2 = -10;
         joints.J3 = -100.0;
-        joints.J4 = 0;
-        joints.J5 = 90.0;
+        joints.J4 = 10;
+        joints.J5 = 80.3;
         joints.J6 = 0;
         comau = myRobot.getPoseAtFlangeComau(joints);
         OutputPoseToConsole(joints, comau, "Pose at Flange In Comau");
@@ -244,7 +253,7 @@ namespace KukaKinematics
         Console.WriteLine($"ZYZ: {zyz.rz1:F3}, {zyz.ry:F3}, {zyz.rz2:F3}");
         zyx = comau.getLHT().getPoseEulerZYX();
         Console.WriteLine($"ZYX: {zyx.rz:F3}, {zyx.ry:F3}, {zyx.rx:F3}");
-        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT())}");
+        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT()):F3}");
 
         joints.J1 = 10.0;
         joints.J2 = 0;
@@ -258,7 +267,7 @@ namespace KukaKinematics
         Console.WriteLine($"ZYZ: {zyz.rz1:F3}, {zyz.ry:F3}, {zyz.rz2:F3}");
         zyx = comau.getLHT().getPoseEulerZYX();
         Console.WriteLine($"ZYX: {zyx.rz:F3}, {zyx.ry:F3}, {zyx.rx:F3}");
-        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT())}");
+        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT()):F3}");
 
         joints.J1 = 0.0;
         joints.J2 = 0;
@@ -272,7 +281,7 @@ namespace KukaKinematics
         Console.WriteLine($"ZYZ: {zyz.rz1:F3}, {zyz.ry:F3}, {zyz.rz2:F3}");
         zyx = comau.getLHT().getPoseEulerZYX();
         Console.WriteLine($"ZYX: {zyx.rz:F3}, {zyx.ry:F3}, {zyx.rx:F3}");
-        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT())}");
+        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT()):F3}");
 
         joints.J1 = -89.93591;
         joints.J2 = 4.25284;
@@ -286,7 +295,21 @@ namespace KukaKinematics
         Console.WriteLine($"ZYZ: {zyz.rz1:F3}, {zyz.ry:F3}, {zyz.rz2:F3}");
         zyx = comau.getLHT().getPoseEulerZYX();
         Console.WriteLine($"ZYX: {zyx.rz:F3}, {zyx.ry:F3}, {zyx.rx:F3}");
-        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT())}");
+        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT()):F3}");
+
+        joints.J1 = 0.11;
+        joints.J2 = 1.47;
+        joints.J3 = -90.59;
+        joints.J4 = -.20;
+        joints.J5 = 87.46;
+        joints.J6 = -351.6;
+        comau = myRobot.getPoseAtFlangeComau(joints);
+        OutputPoseToConsole(joints, comau, "Pose at Flange In Comau");
+        zyz = comau.getLHT().getPoseEulerZYZ();
+        Console.WriteLine($"ZYZ: {zyz.rz1:F3}, {zyz.ry:F3}, {zyz.rz2:F3}");
+        zyx = comau.getLHT().getPoseEulerZYX();
+        Console.WriteLine($"ZYX: {zyx.rz:F3}, {zyx.ry:F3}, {zyx.rx:F3}");
+        Console.WriteLine($"GravityVector: {cLHT.ComputeAngleFromGravity(comau.getLHT()):F3}");
       }
 
       return;
