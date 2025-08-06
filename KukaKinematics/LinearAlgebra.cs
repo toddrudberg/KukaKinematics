@@ -236,7 +236,7 @@ public class cLHT
     k[0] = lhtIn.M[0, 2];
     k[1] = lhtIn.M[1, 2];
     k[2] = lhtIn.M[2, 2];
-    return ComputeAngleFromGravity(k);
+    return Math.Cos(ComputeAngleFromGravity(k).D2R());
   }
 
   public static double ComputeAngleFromGravity(double[] k)
@@ -383,6 +383,41 @@ public class cLHT
 
     return result;
   }
+
+  public (double x, double y, double z, double rz, double ry, double rx) getEulerZYX()
+  {
+    cPose result = new cPose();
+    double[] i = { m[0, 0], m[1, 0], m[2, 0] };
+    double[] j = { m[0, 1], m[1, 1], m[2, 1] };
+    double[] k = { m[0, 2], m[1, 2], m[2, 2] };
+    double[] r = { m[0, 3], m[1, 3], m[2, 3] };
+
+    double rz = Math.Atan2(i[1], i[0]);
+    double ry = Math.Atan2(-i[2], Math.Sqrt(i[0] * i[0] + i[1] * i[1]));
+    double rx = Math.Atan2(j[2], k[2]);
+
+    return (r[0], r[1], r[2], rz.R2D(), ry.R2D(), rx.R2D());
+  }
+
+  public (double x, double y, double z, double rz1, double ry, double rz2) getPoseEulerZYZ()
+  {
+    // Extract orientation vectors
+    double[] i = { m[0, 0], m[1, 0], m[2, 0] };
+    double[] j = { m[0, 1], m[1, 1], m[2, 1] };
+    double[] k = { m[0, 2], m[1, 2], m[2, 2] };
+
+    // Extract position vector
+    double[] r = { m[0, 3], m[1, 3], m[2, 3] };
+
+    // Euler ZYZ decomposition
+    double rz1 = Math.Atan2(k[1], k[0]);
+    double ry = Math.Atan2(Math.Sqrt(k[0] * k[0] + k[1] * k[1]), k[2]);
+    double rz2 = Math.Atan2(j[2], -i[2]);
+
+    // Return named tuple
+    return (r[0], r[1], r[2], rz1.R2D(), ry.R2D(), rz2.R2D());
+  }
+
 
   private double[] extractTranslationAndFixedZYX()
   {
